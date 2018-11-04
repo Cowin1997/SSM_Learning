@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="userDao" class="hqu.edu.lxb.ioc.UserDaoImpl"/>
+    <bean id="user" class="hqu.edu.lxb.entity.User" />
+    <!--<bean id="userDaoJdbc" class="hqu.edu.lxb.dao.UserDaoJdbc" />-->
+    <!-- 通过调用bean工厂的模式-->
+    <!-- 方法一 CreateUserDaoJdbc 方法 必须为static-->
+    <!--<bean id="userDaoJdbc" class="hqu.edu.lxb.beanfactory.UserDaoFactory"-->
+          <!--factory-method="CreateUserDaoJdbc"/>-->
+    <!-- 方法二 CreatrUserDaoJdbc 方法 不为static-->
+    <bean id="userDaoJdbcFactory" class="hqu.edu.lxb.beanfactory.UserDaoFactory"/>
+    <bean id="userDaoJdbc" factory-bean="userDaoJdbcFactory" factory-method="CreateUserDaoJdbc"/>
+
+    <bean id="userDaoMybatis" class="hqu.edu.lxb.dao.UserDaoMybatis"/>
+    <!--通过 属性的setter方法注入 -->
+    <bean id="userService" class="hqu.edu.lxb.service.UserServiceImpl">
+        <!-- 通过setter方法注入 属性名字和具体引用-->
+        <!--方法一-->
+        <!--<property name="userDao" ref="userDaoMybatis"></property>-->
+        <!--方法二-->
+        <property name="userDao" ref="userDaoMybatis"></property>
+        <!--property 的那么属性 对应类中的变量名,首字母可大小写,调用的时候会首字母大写 + set
+            调用对于的setter函数-->
+
+
+        <!-- 通过调用构造器注入 -->
+        <!--<constructor-arg type="hqu.edu.lxb.dao.IUserDao" ref="userDaoMybatis"/>-->
+
+    </bean>
+
+
+
+
+</beans>

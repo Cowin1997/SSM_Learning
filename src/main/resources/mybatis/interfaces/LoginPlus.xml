@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mybatis.interfaces.LoginPlus">
+
+    <!-- resultType 自动封装
+        如果列名和属性名不一样：
+        1.全局设置下设置驼峰命名法为true
+        2.起别名
+        3.使用resultMap 自定义结果集
+
+
+
+
+    -->
+
+    <!--使用resultMap自定义结果集映射规则
+        id：指定唯一标识符
+        type:自定义规则的Java类型,可以使用别名,推荐使用全类径
+
+    -->
+    <resultMap id="MyLoginUser" type="mybatis.myDao.LoginUser">
+        <!-- 指定主键列的封装规则
+           column="username" 数据库中的哪一列
+           property="username" 对应类中的哪一个属性
+        -->
+        <id column="username" property="username"/>
+
+
+        <!-- 普通列对应(主键也可以用) ,-->
+        <result column="password" property="password"/>
+        <!-- 其他不指定的列会自动封装,推荐只要写resultMap就把全部的映射规则都写上-->
+    </resultMap>
+
+    <!-- public LoginUser getLoginUserByUserName(String username);-->
+    <select id="getLoginUserByUserName" resultMap="MyLoginUser" >
+        select * from user where username=#{username}
+    </select>
+
+
+    <resultMap id="LoginUserPlus" type="mybatis.myDao.LoginUserPlus">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="name" property="loginUserInfo.name"/>
+        <result column="gender" property="loginUserInfo.gender"/>
+        <result column="infoid" property="loginUserInfo.id"/>
+    </resultMap>
+
+
+    <resultMap id="LoginUserPlus2" type="mybatis.myDao.LoginUserPlus">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+
+        <association property="loginUserInfo" javaType="mybatis.myDao.LoginUserInfo">
+            <id column="infoid" property="id"/>
+            <result column="name" property="name"/>
+            <result column="gender" property="gender"/>
+            <!--或者通过多步查询的方法-->
+        <!--<association property="loginUserInfo" javaType="mybatis.myDao.LoginUserInfo"-->
+                     <!--select="类路径.类方法" column="选择哪里作为参数">-->
+            <!--select="类路径.类方法" 这个还得写mapper文件映射和函数定义-->
+
+        </association>
+
+    </resultMap>
+
+
+    <!--   public LoginUserPlus getLoginUserAndInfoById(Integer id);-->
+    <select id="getLoginUserAndInfoById" resultMap="LoginUserPlus2" >
+        select u.id ,u.username,u.password ,i.name,i.gender,i.id infoid from
+         userplus u join userinfo i where u.id = i.id and u.id=#{id}
+    </select>
+
+    <!-- 基于分布查询可以采用延迟加载的方法
+        如果没有延迟加载每次查询都会查询 userinfo
+        但是不是每次查询都需要userinfo 延迟加载可需要这个属性的时候再去调用association去封装
+
+
+        设置全局配置：
+             lazyLoadingEnable -> true
+             aggressiveLazyLoading -> false
+
+
+    -->
+
+
+
+
+
+</mapper>

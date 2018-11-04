@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mybatis.interfaces.Login">
+
+    <!--这里可以注释掉,因为@Select("select * from user where username = #{username}")-->
+    <!--同时使用sqlSession.getMapper(Login.class);-->
+<!--<select id="findUserByUserName" parameterType="String"-->
+        <!--resultType="mybatis.myDao.LoginUser">-->
+        <!--select * from user where username = #{username}-->
+<!--</select>-->
+
+
+<!--对于多个参数,Mybatis会做特殊处理,多个参数会被封装成一个map;
+    如果使用以下的#{username} #{password} 会出现异常
+
+-->
+<!--public LoginUser findUserByUserNameAndPassWord(String username,String password);-->
+<select id="findUserByUserNameAndPassWord" resultType="mybatis.myDao.LoginUser">
+        select * from user where username = #{username} and password = #{password}
+</select>
+    <!--正确用法-->
+    <!-- 或者
+         select * from user where username = #{0} and password = #{1}
+    -->
+    <!--<select id="findUserByUserNameAndPassWord" resultType="mybatis.myDao.LoginUser">-->
+    <!--select * from user where username = #{param1} and password = #{param2}-->
+    <!--</select>-->
+
+<!--findUserByUserNameAndPassWordByMap-->
+    <select id="findUserByUserNameAndPassWordByMap" resultType="mybatis.myDao.LoginUser">
+        select * from user where username = #{username} and password = #{password}
+</select>
+
+
+    <!--如果返回的类型是一个list集合
+        resultType:要写集合里面的元素的类型不是list
+
+
+    -->
+    <!--public List<LoginUser> findUserByUserNameLike(String username);-->
+<select id="findUserByUserNameLike" resultType="mybatis.myDao.LoginUser">
+    select * from user where username like #{username}
+</select>
+
+
+
+
+    <!--如果返回的类型是一个map集合,包含一个对象-->
+    <select id="findUserByUserNameReturnMap" resultType="map">
+        select * from user where username = #{username}
+    </select>
+    <!--这样的话返回的map的key是列名,value是查询的值-->
+<!--public void findUserByUserNameLikeReturnMap(String username);-->
+
+
+
+    <!--通过模糊查询用户名,返回一个Map的集合,包含多条记录-->
+
+    <!--public Map<String,Object> findUserByUserNameReturnMaps(String username);-->
+
+    <select id="findUserByUserNameLikeReturnMaps" resultType="map">
+        select * from user where username like #{username}
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+
+     <!--使用别名 -->
+    <!--<select id="findUserByUserName" parameterType="String"-->
+            <!--resultType="Login" >-->
+        <!--select * from user where username = #{username}-->
+    <!--</select>-->
+
+    <!-- 配置在不同的数据库产商下使用不同的sql语言 如果一个带标识一个不带标识
+        则匹配详细的带标识的
+
+
+    -->
+    <!--Mysql下-->
+    <!--<select id="findUserByUserName" parameterType="String"-->
+            <!--resultType="mybatis.myDao.LoginUser" databaseId="mysql">-->
+        <!--select * from user where username = #{username}-->
+    <!--</select>-->
+    <!--Oracle下 语言对于使用oracle语言-->
+    <!--<select id="findUserByUserName" parameterType="String"-->
+            <!--resultType="mybatis.myDao.LoginUser" databaseId="oracle">-->
+        <!--select * from user where username = #{username}-->
+    <!--</select>-->
+
+
+    <!-- 添加 -->
+    <!--public void addLoginUser(LoginUser loginUser)-->
+    <!-- parameterType 可以省略-->
+    <!-- insert 通过 useGeneratedKeys="true" 获取自增主键值策略
+    keyProperty="id" 通过该属性指定对应的主键属性,也就是将得到的值封装给javaBean里面的属性
+    -->
+    <insert id="addLoginUser" parameterType="mybatis.myDao.LoginUser" >
+      insert into user(username,password) values (#{username},#{password})
+    </insert>
+
+
+    <!-- 更新 -->
+    <!--public void updateLoginUser(LoginUser loginUser);-->
+    <update id="updateLoginUser" parameterType="mybatis.myDao.LoginUser" >
+        
+        update user set password=#{password}  where username=#{username}
+        
+    </update>
+
+
+    <!-- 删除 -->
+    <!-- deleteLoginUserByUserName -->
+    <delete id="deleteLoginUserByUserName" parameterType="String">
+        delete from user where username=#{username}
+    </delete>
+
+
+
+
+
+
+
+
+
+</mapper>
+

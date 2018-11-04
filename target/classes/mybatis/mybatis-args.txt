@@ -1,0 +1,72 @@
+
+ MyBatis参数处理:
+    1.单个参数： Mybatis不会做特殊处理;
+            #{参数名} : 取出参数值,对于单个参数的情况,参数名不必匹配,因为只有一个参数;
+    2.多个参数:
+            如果按照上面的 #{username} #{password} 获取
+            public LoginUser findUserByUserNameAndPassWord(String username,String password);
+            会报以下的异常:
+                org.apache.ibatis.exceptions.PersistenceException:
+                ### Error querying database.  Cause: org.apache.ibatis.binding.BindingException: Parameter 'username' not found. Available parameters are [0, 1, param1, param2]
+                ### Cause: org.apache.ibatis.binding.BindingException: Parameter 'username' not found. Available parameters are [0, 1, param1, param2]
+
+      所以对于多个参数,Mybatis会做特殊处理,多个参数会被封装成一个map;
+            key:param1 ....
+            value:传入的参数值
+      #{}就是从map中获取指定的key的值;例如 #{param1} #{param2} 或者使用索引 #{0} #{1}
+      select * from user where username = #{param1} and password = #{param2};
+      select * from user where username = #{0} and password = #{1}
+
+    所以对于多个参数可以使用命名参数:
+         public LoginUser findUserByUserNameAndPassWord(@Param("username")String username,@Param("password")String password);
+
+          key:@Param("username")
+          value:传入的参数值
+          #{指定的key}
+
+
+    如果多个参数正好是数据模型:直接传入pojo  #{pojo属性名} ;
+    如果没有对应的pojo,可以传入map:
+                                #{key}:取出map中对应的值
+    如果经常使用,推荐写一个TO (Transfer Object) 数据传输对象
+    Page{
+        int index;
+        int size;
+    }
+
+
+public Employee getEmpById(List<Integer> ids);
+    如果是Collection(List,Set)或者数组也会进行特殊的处理;也是把传入的list或者数组封装在map中;
+    key:Collection -> collection ; key:List -> list ; key:Array -> array;
+    取值: #{list[0]}  等等
+
+
+
+
+参数的取值:
+    #{}:sql预编译;sql语句是?
+    ${}:直接取出拼接sql,容易产生安全问题
+    原生jdbc不支持占位符的地方可以使用${}进行取值;
+    比如说分表,排序等
+        select * from ${year}_Salary where xxxxxxx;
+        select * from tb1_employee order by ${f_name} ${order}
+
+    #{}可以规定参数的一些规则:
+    javaType , jdbcType , mode(存储过程) , numericScale , resultMap , typeHandle ,
+    jdbcTypeName , expression(未来准备支持的功能)
+
+    jdbcType通常需要在某种特定的条件下被设置:
+        在数据为null的时候,有些数据库可能不能识别mybatis对null的默认处理,比如oracle; jdbcTypeOther 无效的类型
+        因为mybatis对所有的null的映射的都是原生jdbc OTHER类型(JdbcType.class)
+        jdbc OTHER Oracle不支持
+        xxxx values(#{id}, #{lastname}, #{email ,jdbcType=NULL) 如果为空,对应的是NULL类型
+
+        由于全局配置中 jdbcTypeForNull = OTHER ; Oracle不支持
+        1. 修改#{email ,jdbcType=NULL)
+        2. 修改全局配置jdbcTypeForNull = NULL
+        <settings>
+            <setting name="jdbcTypeForNull" value="NULL" />
+        </settings>
+
+
+
