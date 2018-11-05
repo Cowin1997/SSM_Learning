@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.interfaces.StudentMapper">
+    <!--通过动态SQL查询-->
+    <!--  public List<Student> findStudentByDynamicSQL(Student student);;-->
+    <select id="findStudentByDynamicSQL" resultType="mybatis.myDao.Student">
+        select * from student where SNo=#{sNo}
+        <if test="sSex!=null">
+            and SSex = #{sSex}
+        </if>
+    </select>
+
+</mapper>

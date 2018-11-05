@@ -1,4 +1,4 @@
-package mybatis.myDao;
+package mybatis.test;
 
 
 

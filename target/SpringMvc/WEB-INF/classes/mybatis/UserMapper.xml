@@ -1,8 +1,67 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="Mybatis2.mapper.LoginUser">
+
+
+<mapper namespace="mybatis.mapper.LoginUser">
 <select id="findUserByUserName" parameterType="String"
-        resultType="Mybatis2.myDao.LoginUser">
+        resultType="mybatis.myDao.LoginUser">
         select * from user where username = #{username}
-    </select>
+</select>
+
+
+     <!--使用别名 -->
+    <!--<select id="findUserByUserName" parameterType="String"-->
+            <!--resultType="Login" >-->
+        <!--select * from user where username = #{username}-->
+    <!--</select>-->
+
+    <!-- 配置在不同的数据库产商下使用不同的sql语言 如果一个带标识一个不带标识
+        则匹配详细的带标识的
+
+
+    -->
+    <!--Mysql下-->
+    <!--<select id="findUserByUserName" parameterType="String"-->
+            <!--resultType="mybatis.myDao.LoginUser" databaseId="mysql">-->
+        <!--select * from user where username = #{username}-->
+    <!--</select>-->
+    <!--Oracle下 语言对于使用oracle语言-->
+    <!--<select id="findUserByUserName" parameterType="String"-->
+            <!--resultType="mybatis.myDao.LoginUser" databaseId="oracle">-->
+        <!--select * from user where username = #{username}-->
+    <!--</select>-->
+
+
+    <!-- 添加 -->
+    <!--public void addLoginUser(LoginUser loginUser)-->
+    <!-- parameterType 可以省略-->
+    <insert id="addLoginUser" parameterType="mybatis.myDao.LoginUser">
+      insert into user(username,password) values (#{username},#{password})
+    </insert>
+
+
+    <!-- 更新 -->
+    <!--public void updateLoginUser(LoginUser loginUser);-->
+    <update id="updateLoginUser" parameterType="mybatis.myDao.LoginUser" >
+        
+        update user set password=#{password}  where username=#{username}
+        
+    </update>
+
+
+    <!-- 删除 -->
+    <!-- deleteLoginUserByUserName -->
+    <delete id="deleteLoginUserByUserName" parameterType="String">
+        delete from user where username=#{username}
+    </delete>
+
+
+
+
+
+
+
+
+
 </mapper>
+

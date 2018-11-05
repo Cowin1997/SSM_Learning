@@ -51,22 +51,23 @@
 
 
     <resultMap id="LoginUserPlus2" type="mybatis.myDao.LoginUserPlus">
-        <id column="id" property="id"/>
-        <result column="username" property="username"/>
-        <result column="password" property="password"/>
+    <id column="id" property="id"/>
+    <result column="username" property="username"/>
+    <result column="password" property="password"/>
 
-        <association property="loginUserInfo" javaType="mybatis.myDao.LoginUserInfo">
-            <id column="infoid" property="id"/>
-            <result column="name" property="name"/>
-            <result column="gender" property="gender"/>
-            <!--或者通过多步查询的方法-->
+    <association property="loginUserInfo" javaType="mybatis.myDao.LoginUserInfo">
+        <id column="infoid" property="id"/>
+        <result column="name" property="name"/>
+        <result column="gender" property="gender"/>
+        <!--或者通过多步查询的方法-->
         <!--<association property="loginUserInfo" javaType="mybatis.myDao.LoginUserInfo"-->
-                     <!--select="类路径.类方法" column="选择哪里作为参数">-->
-            <!--select="类路径.类方法" 这个还得写mapper文件映射和函数定义-->
+        <!--select="类路径.类方法" column="选择哪里作为参数">-->
+        <!--select="类路径.类方法" 这个还得写mapper文件映射和函数定义-->
 
-        </association>
+    </association>
 
-    </resultMap>
+</resultMap>
+
 
 
     <!--   public LoginUserPlus getLoginUserAndInfoById(Integer id);-->
@@ -75,20 +76,73 @@
          userplus u join userinfo i where u.id = i.id and u.id=#{id}
     </select>
 
+
+
+<!--*******************************分步查询***************************************************-->
     <!-- 基于分布查询可以采用延迟加载的方法
-        如果没有延迟加载每次查询都会查询 userinfo
-        但是不是每次查询都需要userinfo 延迟加载可需要这个属性的时候再去调用association去封装
+         如果没有延迟加载每次查询都会查询 userinfo
+         但是不是每次查询都需要userinfo 延迟加载可需要这个属性的时候再去调用association去封装
 
 
-        设置全局配置：
-             lazyLoadingEnable -> true
-             aggressiveLazyLoading -> false
+         设置全局配置：
+              lazyLoadingEnable -> true
+              aggressiveLazyLoading -> false
 
 
-    -->
+     -->
 
 
 
+
+
+    <resultMap id="LoginUserPlusByStep" type="mybatis.myDao.LoginUserPlus">
+
+        <!-- 分布查询步骤:
+            1.通过id查找登录账户密码信息
+            2.根据查询到的值的id去信息表查询个人信息
+            3.设置到LoginUserPlus里面去
+
+        -->
+
+
+        <id column="id" property="id"/>
+        <!--这里的 id 填入下面分布查询的 column属性中作为 调用映射文件的参数-->
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+
+
+            <!--通过多步查询的方法-->
+            <!--<association property="loginUserInfo" javaType="mybatis.myDao.LoginUserInfo"-->
+            <!--select="类路径.类方法" column="选择哪里作为参数">-->
+            <!--select="类路径.类方法" 这个还得写mapper文件映射和函数定义-->
+            <!--
+                select:表明当前属性的调用select指定的方法查出来的结果
+                column:指定将哪一列的值传给这个方法
+                用select指定的方法(传入column指定的这列参数的值)查询出来并且封装给property
+                指定的属性
+            -->
+            <association property="loginUserInfo" javaType="mybatis.myDao.LoginUserInfo"
+            select="mybatis.interfaces.LoginInfo.getLoginUserInfoById" column="id"
+            >
+                <!--  如果分步查询所需的参数是多个可以在 column 列中使用 {}
+                 例如上面的 {id=id} key对应的是查询的表的列名
+                 其中 select 还有一个 fetchType = "lazy": 默认延迟加载
+                 也可以设置为 eager:立即加载而不需要修改全局的配置
+
+               如果 需要设置返回一个集合的话可以使用 collection 标签
+
+
+                -->
+            </association>
+
+
+    </resultMap>
+
+        <!-- public LoginUser getLoginUserByIdStep(Integer id);-->
+    <select id="getLoginUserByIdStep"  resultMap="LoginUserPlusByStep">
+            select * from userplus where id = #{id}
+    </select>
 
 
 </mapper>
+

@@ -1,7 +1,9 @@
-package mybatis.myDao;
+package mybatis.test;
 
 import mybatis.interfaces.Login;
 import mybatis.interfaces.LoginPlus;
+import mybatis.myDao.LoginUser;
+import mybatis.myDao.LoginUserPlus;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
@@ -234,6 +236,34 @@ public class MyBatisTest {
             LoginPlus loginPlusMapper = sqlSession.getMapper(LoginPlus.class);
             LoginUserPlus loginUserPlus =loginPlusMapper.getLoginUserAndInfoById(2);
             System.out.println(loginUserPlus);
+
+            /**
+             *  结果
+             *      LoginUser{username='xiaofei', password='admin'}
+             *
+             */
+        }
+        finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void testByStep() throws IOException{
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        // 自动提交
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+        try {
+            LoginPlus loginPlusMapper = sqlSession.getMapper(LoginPlus.class);
+            LoginUserPlus loginUserPlus=loginPlusMapper.getLoginUserByIdStep(1);
+            System.out.println(loginUserPlus.getUsername()+","+loginUserPlus.getPassword());
+
+
+            // 使用懒加载查询用户信息
+            // mybatis 版本太低不能用
+            System.out.println(loginUserPlus.getLoginUserInfo());
+
+
 
             /**
              *  结果

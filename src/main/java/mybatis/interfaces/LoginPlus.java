@@ -19,4 +19,11 @@ public interface LoginPlus {
      */
     public LoginUserPlus getLoginUserAndInfoById(Integer id);
 
+
+    /**
+     *
+     *  通过 id 查找登录信息,只包含用户名和密码不包括个人信息
+     *
+     */
+    public LoginUserPlus getLoginUserByIdStep(Integer id);
 }

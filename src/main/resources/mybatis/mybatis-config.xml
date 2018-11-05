@@ -11,7 +11,9 @@
     <!-- 配置全局配置底下的一些属性 -->
     <settings>
         <!--<setting name="mapUnderscoreToCamelCase" value="true"/>-->
-        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <setting name="logImpl" value="LOG4J"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
     </settings>
 
 

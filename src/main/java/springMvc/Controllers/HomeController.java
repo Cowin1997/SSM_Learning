@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import spring.Aop.proxy.entity.UserDao;
-//import mybatis.myDao.MyBaitsTest2;
-import mybatis.myDao.MyBaitsTest2;
+//import mybatis.test.MyBaitsTest2;
+import mybatis.test.MyBaitsTest2;
 
 
 
@@ -32,5 +32,9 @@ public class HomeController {
         MyBaitsTest2.test();
         System.out.println("执行home方法"+Thread.currentThread().getContextClassLoader().getResource("/").getPath());
         return "inde";
+    }
+    @RequestMapping(value = {"/test"},method = RequestMethod.GET)
+    public String toTest(){
+        return "test";
     }
 }

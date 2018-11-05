@@ -5,6 +5,16 @@ public class LoginUserInfo {
     private String name;
     private String gender;
 
+    public LoginUserInfo() {
+
+    }
+
+    public LoginUserInfo(Integer id, String name, String gender) {
+        this.id = id;
+        this.name = name;
+        this.gender = gender;
+    }
+
     public Integer getId() {
         return id;
     }
